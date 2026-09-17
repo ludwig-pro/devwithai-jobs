@@ -41,9 +41,11 @@ export default function JobDetail({ job }: Props) {
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/logo.png" alt="Dev With AI" width={36} height={36} />
-            <span className="brand-name">Dev With AI</span>
-            <span className="brand-sep">·</span>
-            <span className="brand-jobs">Jobs</span>
+            <span className="brand-lockup">
+              <span className="brand-name">Dev With AI</span>
+              <span className="brand-sep">·</span>
+              <span className="brand-jobs">Jobs</span>
+            </span>
           </a>
           <a
             className="btn-slack"
