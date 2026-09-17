@@ -21,11 +21,13 @@ function remoteLabel(job: Job): string {
 export default function JobDetail({ job }: Props) {
   const type = contractType(job);
   const remote = remoteLabel(job);
+  const keyFacts = [type, remote].filter(Boolean);
   const showSlack =
     Boolean(job.permalink) && job.permalink !== job.primaryUrl;
   const paragraphs = job.body
     ? job.body.split(/\n\n+/).map((p) => p.trim()).filter(Boolean)
     : [];
+  const skills = job.skills.slice(0, 8);
 
   return (
     <>
@@ -72,24 +74,43 @@ export default function JobDetail({ job }: Props) {
             </div>
             <div className="hero-grid">
               <div className="hero-main">
-                <div
-                  className="company-mark"
-                  style={{ background: job.accent }}
-                  aria-hidden
-                >
-                  {job.initials}
+                <div className="company-block">
+                  <div
+                    className="company-mark"
+                    style={{ background: job.accent }}
+                    aria-hidden
+                  >
+                    {job.initials}
+                  </div>
+                  {job.company ? (
+                    <div className="company-meta">
+                      <div className="co-name">{job.company}</div>
+                      <div className="co-sub">Via communauté Dev With AI</div>
+                    </div>
+                  ) : (
+                    <div className="company-meta">
+                      <div className="co-sub">Via communauté Dev With AI</div>
+                    </div>
+                  )}
                 </div>
                 <h1 className="detail-title">{job.title}</h1>
-                {job.company ? (
-                  <p className="detail-company">
-                    <strong>{job.company}</strong>
-                  </p>
+                {keyFacts.length > 0 ? (
+                  <div className="key-facts">
+                    {keyFacts.map((fact) => (
+                      <span
+                        key={fact}
+                        className={`fact ft-${fact === "Full remote" ? "Remote" : fact}`}
+                      >
+                        {fact}
+                      </span>
+                    ))}
+                  </div>
                 ) : null}
               </div>
               {job.date ? (
                 <div className="hero-aside">
                   <time className="date" title={job.dateFull || undefined}>
-                    Publié · {job.date}
+                    Publié le {job.date}
                   </time>
                 </div>
               ) : null}
@@ -104,6 +125,19 @@ export default function JobDetail({ job }: Props) {
               paragraphs.map((p, i) => <p key={i}>{p}</p>)
             ) : job.excerpt ? (
               <p>{job.excerpt}</p>
+            ) : null}
+
+            {skills.length > 0 ? (
+              <div className="skills-block">
+                <div className="skills-label">Compétences</div>
+                <div className="skills">
+                  {skills.map((s) => (
+                    <span key={s} className="skill">
+                      {s}
+                    </span>
+                  ))}
+                </div>
+              </div>
             ) : null}
 
             <div className="article-divider" />
@@ -178,16 +212,21 @@ export default function JobDetail({ job }: Props) {
                   <span className="meta-value">{job.date}</span>
                 </div>
               ) : null}
-              {job.company ? (
-                <div className="meta-row">
-                  <span className="meta-key">Entreprise</span>
-                  <span className="meta-value">{job.company}</span>
-                </div>
-              ) : null}
             </div>
           </aside>
         </div>
       </main>
+
+      <div className="cta-bar" aria-label="Actions">
+        <a
+          className="cta cta-primary"
+          href={job.primaryUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Voir l’offre <span className="external">↗</span>
+        </a>
+      </div>
 
       <footer className="footer">
         <div className="wrap footer-inner">
