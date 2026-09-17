@@ -171,10 +171,6 @@ export function deriveSalary(message: string): string {
   return "";
 }
 
-/**
- * Concrete stack tokens found in the post (URL-stripped).
- * Never invent. Ignore soft skills and seniority. Max 8, first mention wins.
- */
 type SkillDef = { label: string; re: RegExp };
 
 const SKILL_CATALOG: SkillDef[] = [
