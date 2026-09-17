@@ -16,6 +16,7 @@ export type Job = {
   date: string;
   dateFull: string;
   excerpt: string;
+  body: string;
   filterTags: FilterTag[];
   primaryUrl: string;
   permalink: string;

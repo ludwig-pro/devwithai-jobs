@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState } from "react";
 import type { Job } from "@/lib/types";
 
@@ -158,12 +159,10 @@ export default function JobsBoard({ jobs }: Props) {
           {showList && (
             <div className="list">
               {filtered.map((j) => (
-                <a
+                <Link
                   key={j.id}
                   className="row"
-                  href={j.primaryUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  href={`/job/${j.id}`}
                   style={{ ["--accent" as string]: j.accent }}
                 >
                   <div
@@ -210,12 +209,12 @@ export default function JobsBoard({ jobs }: Props) {
                     aria-hidden
                   >
                     <path
-                      d="M7 17L17 7M9 7h8v8"
+                      d="M9 5l7 7-7 7"
                       strokeLinecap="round"
                       strokeLinejoin="round"
                     />
                   </svg>
-                </a>
+                </Link>
               ))}
             </div>
           )}

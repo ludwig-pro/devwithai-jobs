@@ -98,14 +98,25 @@ export function deriveTags(message: string): FilterTag[] {
   return tags;
 }
 
-function deriveCompany(message: string, title: string): string {
-  const lines = usefulLines(message);
-  // second useful line as soft subtitle if distinct
-  for (const line of lines) {
-    const t = truncate(line, 70);
-    if (t && t !== title && !title.startsWith(t.slice(0, 40))) {
-      return t;
-    }
+/** Light company extraction — only clear patterns; otherwise omit. */
+function deriveCompany(message: string): string {
+  const text = stripUrls(message).replace(/\s+/g, " ").trim();
+
+  const patterns: RegExp[] = [
+    /\bchez\s+([A-ZÀ-ÖØ-Ý][\w.&'’-]{1,40})/,
+    /\bat\s+([A-Z][\w.&'-]{1,40})(?=[\s.,;:!?]|$)/,
+    /\|\s*([A-ZÀ-ÖØ-Ý][\w.&'’-]{1,40})\s*(?:\.|$)/,
+    /\b[Cc]lients?\s+([A-ZÀ-ÖØ-Ý][\w.&'’-]{1,40})/,
+  ];
+
+  for (const re of patterns) {
+    const m = text.match(re);
+    if (!m) continue;
+    const name = m[1].replace(/[.,;:!?]+$/, "").trim();
+    if (!name || name.length < 2) continue;
+    // skip common false positives
+    if (/^(the|a|an|our|mon|ma|mes|un|une|des|les|la|le)$/i.test(name)) continue;
+    return name;
   }
   return "";
 }
@@ -113,6 +124,13 @@ function deriveCompany(message: string, title: string): string {
 function deriveExcerpt(message: string): string {
   const stripped = stripUrls(message).replace(/\s+/g, " ").trim();
   return truncate(stripped, 220);
+}
+
+function deriveBody(message: string): string {
+  const lines = usefulLines(message).map((l) =>
+    stripUrls(l).replace(/\s+/g, " ").trim(),
+  );
+  return lines.filter(Boolean).join("\n\n");
 }
 
 function shortDate(dateFull: string): string {
@@ -132,18 +150,25 @@ function initialsFromTitle(title: string): string {
   return (words[0][0] + words[1][0]).toUpperCase();
 }
 
+function deriveId(permalink: string, index: number): string {
+  const m = permalink.match(/\/p(\d+)/);
+  if (m) return m[1];
+  return String(index);
+}
+
 export function normalizeJob(raw: RawJob, index: number): Job {
   const title = deriveTitle(raw.message_text);
   const filterTags = deriveTags(raw.message_text);
   const primaryUrl = derivePrimaryUrl(raw.urls || [], raw.slack_permalink);
   return {
-    id: `${index}-${raw.slack_permalink}`,
+    id: deriveId(raw.slack_permalink, index),
     title,
-    company: deriveCompany(raw.message_text, title),
+    company: deriveCompany(raw.message_text),
     author: raw.author || "Anonyme",
     date: shortDate(raw.date_time_shown || ""),
     dateFull: raw.date_time_shown || "",
     excerpt: deriveExcerpt(raw.message_text),
+    body: deriveBody(raw.message_text),
     filterTags,
     primaryUrl,
     permalink: raw.slack_permalink,

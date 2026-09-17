@@ -597,3 +597,289 @@ a {
     top: 57px;
   }
 }
+
+/* ── Job detail `/job/[id]` ── */
+.detail-main {
+  padding-bottom: 5rem;
+}
+
+.back-wrap {
+  padding-top: 2rem;
+}
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--sec);
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: color 0.15s;
+}
+
+.back:hover {
+  color: var(--text);
+}
+
+.back-arrow {
+  font-size: 1.15rem;
+  line-height: 1;
+}
+
+.detail-hero {
+  padding: 2.25rem 0 2.75rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 13rem;
+  gap: 2rem;
+  align-items: end;
+}
+
+.hero-main {
+  min-width: 0;
+}
+
+.company-mark {
+  width: 56px;
+  height: 56px;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  margin-bottom: 1.25rem;
+  box-shadow: 0 8px 18px rgba(255, 64, 255, 0.13);
+}
+
+.detail-title {
+  font-size: clamp(2.2rem, 5.5vw, 3.5rem);
+  font-weight: 800;
+  letter-spacing: -0.055em;
+  line-height: 1.02;
+  max-width: 52rem;
+}
+
+.detail-company {
+  font-size: 1.08rem;
+  color: var(--sec);
+  font-weight: 500;
+  margin-top: 1rem;
+}
+
+.detail-company strong {
+  color: var(--text);
+  font-weight: 700;
+}
+
+.hero-aside {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.date {
+  font-size: 0.82rem;
+  color: var(--ter);
+  white-space: nowrap;
+}
+
+.content-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 18rem;
+  gap: 4rem;
+  padding-top: 2.75rem;
+}
+
+.article {
+  min-width: 0;
+  max-width: 43rem;
+}
+
+.article h2 {
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.article p {
+  font-size: 1rem;
+  color: var(--sec);
+  line-height: 1.75;
+  margin-bottom: 1.15rem;
+}
+
+.article p:last-child {
+  margin-bottom: 0;
+}
+
+.article strong {
+  color: var(--text);
+  font-weight: 700;
+}
+
+.article-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 2rem 0;
+}
+
+.meta-card {
+  position: sticky;
+  top: 6.5rem;
+  align-self: start;
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  padding: 1.1rem;
+  background: var(--white);
+}
+
+.card-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-weight: 700;
+  color: var(--ter);
+  margin-bottom: 0.85rem;
+}
+
+.meta-list {
+  border-top: 1px solid var(--border);
+  margin-top: 1.1rem;
+}
+
+.meta-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.12rem;
+  padding: 0.7rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.meta-row:last-child {
+  border-bottom: 0;
+}
+
+.meta-key {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  font-weight: 700;
+  color: var(--ter);
+}
+
+.meta-value {
+  font-size: 0.85rem;
+  color: var(--text);
+  font-weight: 600;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 2rem;
+}
+
+.cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  border-radius: 9999px;
+  padding: 0.78rem 1.15rem;
+  font-size: 0.88rem;
+  font-weight: 700;
+  transition:
+    transform 0.15s,
+    opacity 0.15s;
+}
+
+.cta:hover {
+  transform: translateY(-1px);
+  opacity: 0.86;
+}
+
+.cta-primary {
+  background: var(--text);
+  color: #fff;
+}
+
+.cta-secondary {
+  color: var(--text);
+  border: 1px solid var(--border);
+  background: #fff;
+}
+
+.cta-secondary:hover {
+  border-color: var(--text);
+}
+
+.external {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+@media (max-width: 760px) {
+  .hero-grid,
+  .content-grid {
+    grid-template-columns: 1fr;
+  }
+  .hero-grid {
+    gap: 1rem;
+  }
+  .hero-aside {
+    justify-content: flex-start;
+  }
+  .date {
+    font-size: 0.78rem;
+  }
+  .content-grid {
+    gap: 2.25rem;
+  }
+  .meta-card {
+    position: static;
+    order: -1;
+    max-width: none;
+  }
+  .actions {
+    margin-top: 1.5rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .back-wrap {
+    padding-top: 1.4rem;
+  }
+  .detail-hero {
+    padding: 1.8rem 0 2.1rem;
+  }
+  .detail-title {
+    font-size: clamp(2.15rem, 11vw, 3.3rem);
+  }
+  .detail-company {
+    font-size: 0.96rem;
+  }
+  .content-grid {
+    padding-top: 2rem;
+  }
+  .article p {
+    font-size: 0.94rem;
+  }
+  .cta {
+    width: 100%;
+  }
+  .cta-secondary {
+    width: auto;
+  }
+  .actions {
+    align-items: stretch;
+  }
+}

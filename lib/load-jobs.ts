@@ -17,3 +17,7 @@ export function loadJobs(): Job[] {
   // newest first if dates appear chronological ascending in file — keep file order (already oldest→newest in source; reverse for board)
   return jobs.slice().reverse();
 }
+
+export function getJobById(id: string): Job | undefined {
+  return loadJobs().find((j) => j.id === id);
+}
