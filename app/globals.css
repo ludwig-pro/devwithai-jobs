@@ -12,7 +12,12 @@
   --white: #fff;
   --grad: linear-gradient(90deg, #0061ff, #ff40ff, #ff2600, #ff9300);
   --radius: 0.5rem;
-  --header-h: calc(2rem + 36px + 1px);
+  --header-pad-y: 1rem;
+  --header-logo: 36px;
+  --header-border: 1px;
+  --header-h: calc(
+    var(--header-pad-y) * 2 + var(--header-logo) + var(--header-border)
+  );
 }
 
 * {
@@ -57,7 +62,7 @@ a {
   z-index: 50;
   min-height: var(--header-h);
   background: var(--white);
-  border-bottom: 1px solid var(--border);
+  border-bottom: var(--header-border) solid var(--border);
 }
 
 .header-inner {
@@ -65,7 +70,7 @@ a {
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  padding-block: 1rem;
+  padding-block: var(--header-pad-y);
 }
 
 .brand {
@@ -76,8 +81,8 @@ a {
 }
 
 .brand img {
-  width: 36px;
-  height: 36px;
+  width: var(--header-logo);
+  height: var(--header-logo);
   border-radius: 0.375rem;
   flex-shrink: 0;
   object-fit: cover;
