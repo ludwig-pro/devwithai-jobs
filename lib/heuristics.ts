@@ -171,6 +171,82 @@ export function deriveSalary(message: string): string {
   return "";
 }
 
+/**
+ * Concrete stack tokens found in the post (URL-stripped).
+ * Never invent. Ignore soft skills and seniority. Max 8, first mention wins.
+ */
+type SkillDef = { label: string; re: RegExp };
+
+const SKILL_CATALOG: SkillDef[] = [
+  { label: "NestJS", re: /\bnest\.?js\b/i },
+  { label: "Next.js", re: /\bnext\.?js\b/i },
+  { label: "React", re: /\breact(?:\.?js)?\b/i },
+  { label: "Vue", re: /\bvue(?:\.?js)?\b/i },
+  { label: "Node", re: /\bnode(?:\.?js)?\b/i },
+  { label: "TypeScript", re: /\btypescript\b|\bTS\b/i },
+  { label: "JavaScript", re: /\bjavascript\b/i },
+  { label: "Python", re: /\bpython\b/i },
+  { label: "Go", re: /\bgolang\b|\bGo\b/ },
+  { label: "Rust", re: /\brust\b/i },
+  { label: "Expo", re: /\bexpo\b/i },
+  { label: "Flutter", re: /\bflutter\b/i },
+  { label: "Django", re: /\bdjango\b/i },
+  { label: "FastAPI", re: /\bfastapi\b/i },
+  { label: "GraphQL", re: /\bgraphql\b/i },
+  { label: "tRPC", re: /\btrpc\b/i },
+  { label: "LangChain", re: /\blangchain\b/i },
+  { label: "LangGraph", re: /\blanggraph\b/i },
+  { label: "LLM", re: /\bllms?\b/i },
+  { label: "GenAI", re: /\bgenai\b/i },
+  { label: "RAG", re: /\brag\b/i },
+  { label: "Agents", re: /\bagentique\b|\bagents\b/i },
+  { label: "MCP", re: /\bMCP\b/ },
+  { label: "Claude", re: /\bclaude(?:\s+code)?\b/i },
+  { label: "Codex", re: /\bcodex\b/i },
+  { label: "embeddings", re: /\bembeddings?\b/i },
+  { label: "NLP", re: /\bNLP\b/ },
+  { label: "IA", re: /\bIA\b|\bAI\b/ },
+  { label: "AWS", re: /\bAWS\b/ },
+  { label: "Docker", re: /\bdocker\b/i },
+  { label: "Kubernetes", re: /\bkubernetes\b|\bk8s\b/i },
+  { label: "Postgres", re: /\bpostgres(?:ql)?\b/i },
+  { label: "Supabase", re: /\bsupabase\b/i },
+  { label: "Vercel", re: /\bvercel\b/i },
+  { label: "OpenFOAM", re: /\bopenfoam\b/i },
+  { label: "Ansys", re: /\bansys\b/i },
+];
+
+const MAX_SKILLS = 8;
+
+export function skillMentioned(label: string, message: string): boolean {
+  const def = SKILL_CATALOG.find((s) => s.label === label);
+  if (!def) return false;
+  return def.re.test(stripUrls(message));
+}
+
+export function deriveSkills(message: string): string[] {
+  const text = stripUrls(message);
+  const hits: { label: string; index: number }[] = [];
+
+  for (const { label, re } of SKILL_CATALOG) {
+    const flags = re.flags.includes("g") ? re.flags : `${re.flags}g`;
+    const copy = new RegExp(re.source, flags);
+    const m = copy.exec(text);
+    if (m && m.index >= 0) hits.push({ label, index: m.index });
+  }
+
+  hits.sort((a, b) => a.index - b.index);
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const h of hits) {
+    if (seen.has(h.label)) continue;
+    seen.add(h.label);
+    out.push(h.label);
+    if (out.length >= MAX_SKILLS) break;
+  }
+  return out;
+}
+
 /** Light company extraction — only clear patterns; otherwise omit. */
 function deriveCompany(message: string): string {
   const text = stripUrls(message).replace(/\s+/g, " ").trim();
@@ -231,22 +307,24 @@ function deriveId(permalink: string, index: number): string {
 
 export function normalizeJob(raw: RawJob, index: number): Job {
   const title = deriveTitle(raw.message_text);
+  const company = deriveCompany(raw.message_text);
   const filterTags = deriveTags(raw.message_text);
   const primaryUrl = derivePrimaryUrl(raw.urls || [], raw.slack_permalink);
   return {
     id: deriveId(raw.slack_permalink, index),
     title,
-    company: deriveCompany(raw.message_text),
+    company,
     author: raw.author || "Anonyme",
     date: shortDate(raw.date_time_shown || ""),
     dateFull: raw.date_time_shown || "",
     excerpt: deriveExcerpt(raw.message_text),
     body: deriveBody(raw.message_text),
     salary: deriveSalary(raw.message_text),
+    skills: deriveSkills(raw.message_text),
     filterTags,
     primaryUrl,
     permalink: raw.slack_permalink,
     accent: ACCENTS[index % ACCENTS.length],
-    initials: initialsFromTitle(title),
+    initials: initialsFromTitle(company || title),
   };
 }
