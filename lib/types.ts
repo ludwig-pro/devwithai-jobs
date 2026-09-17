@@ -19,6 +19,8 @@ export type Job = {
   body: string;
   /** Short display string when extracted; empty if absent (UI hides). */
   salary: string;
+  /** Concrete stack mentioned in the post, appearance order, max 8. Empty hides the block. */
+  skills: string[];
   filterTags: FilterTag[];
   primaryUrl: string;
   permalink: string;
