@@ -17,6 +17,8 @@ export type Job = {
   dateFull: string;
   excerpt: string;
   body: string;
+  /** Short display string when extracted; empty if absent (UI hides). */
+  salary: string;
   filterTags: FilterTag[];
   primaryUrl: string;
   permalink: string;

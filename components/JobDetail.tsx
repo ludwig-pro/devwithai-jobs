@@ -138,6 +138,12 @@ export default function JobDetail({ job }: Props) {
 
           <aside className="meta-card" aria-label="Résumé de l'offre">
             <div className="card-label">En bref</div>
+            {job.salary ? (
+              <div className="salary-block">
+                <span className="salary-key">Salaire</span>
+                <span className="salary-value">{job.salary}</span>
+              </div>
+            ) : null}
             {job.filterTags.length > 0 ? (
               <div className="tags">
                 {job.filterTags.map((t) => (

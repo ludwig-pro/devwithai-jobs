@@ -30,6 +30,7 @@ export default function JobsBoard({ jobs }: Props) {
         j.company,
         j.excerpt,
         j.author,
+        j.salary,
         j.filterTags.join(" "),
       ]
         .join(" ")
@@ -189,8 +190,11 @@ export default function JobsBoard({ jobs }: Props) {
                       <span className="author">
                         par <strong>{j.author}</strong>
                       </span>
-                      {j.filterTags.length > 0 && (
+                      {(j.salary || j.filterTags.length > 0) && (
                         <div className="tags">
+                          {j.salary ? (
+                            <span className="tag salary-chip">{j.salary}</span>
+                          ) : null}
                           {j.filterTags.map((t) => (
                             <span key={t} className={`tag ft-${t}`}>
                               {t}

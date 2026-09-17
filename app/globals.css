@@ -457,6 +457,17 @@ a {
   border-color: #ff40ff;
 }
 
+.tag.salary-chip {
+  text-transform: none;
+  letter-spacing: 0.02em;
+  font-variant-numeric: tabular-nums;
+  background: var(--surface);
+  color: var(--text);
+  border-color: var(--border);
+  font-weight: 700;
+}
+
+
 .ext {
   width: 18px;
   height: 18px;
@@ -748,6 +759,37 @@ a {
   color: var(--ter);
   margin-bottom: 0.85rem;
 }
+
+.salary-block {
+  margin: 0 0 1.1rem;
+  padding: 1rem 1rem 1.05rem;
+  border-radius: 0.65rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+
+.salary-key {
+  display: block;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  font-weight: 700;
+  color: var(--ter);
+  margin-bottom: 0.35rem;
+}
+
+.salary-value {
+  display: block;
+  font-size: 1.55rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  background: var(--grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
 
 .meta-list {
   border-top: 1px solid var(--border);

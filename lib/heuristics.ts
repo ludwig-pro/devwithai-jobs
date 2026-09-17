@@ -98,6 +98,79 @@ export function deriveTags(message: string): FilterTag[] {
   return tags;
 }
 
+
+/** Extract a short salary display string from Slack text. Never invent. */
+export function deriveSalary(message: string): string {
+  const text = stripUrls(message);
+
+  type Pat = { re: RegExp; fmt: (m: RegExpMatchArray) => string };
+  const pats: Pat[] = [
+    // package 45–60 k€ / package 45-60k
+    {
+      re: /\bpackage\s+(\d+(?:[.,]\d+)?)\s*[–\-—]\s*(\d+(?:[.,]\d+)?)\s*k\s*€?/i,
+      fmt: (m) => `${m[1]}–${m[2]} k€`,
+    },
+    // package 45k / package 45 k€
+    {
+      re: /\bpackage\s+(\d+(?:[.,]\d+)?)\s*k\s*€?/i,
+      fmt: (m) => `${m[1]} k€`,
+    },
+    // TJM 500-650€ / TJM 500€
+    {
+      re: /\bTJM\s*[:=]?\s*(\d+(?:[.,]\d+)?)\s*[–\-—]\s*(\d+(?:[.,]\d+)?)\s*€?/i,
+      fmt: (m) => `TJM ${m[1]}–${m[2]}€`,
+    },
+    {
+      re: /\bTJM\s*[:=]?\s*(\d+(?:[.,]\d+)?)\s*€/i,
+      fmt: (m) => `TJM ${m[1]}€`,
+    },
+    // 500-650€/j · 500€/j
+    {
+      re: /(\d+(?:[.,]\d+)?)\s*[–\-—]\s*(\d+(?:[.,]\d+)?)\s*€\s*\/\s*j(?:our)?s?\b/i,
+      fmt: (m) => `${m[1]}–${m[2]}€/j`,
+    },
+    {
+      re: /(\d+(?:[.,]\d+)?)\s*€\s*\/\s*j(?:our)?s?\b/i,
+      fmt: (m) => `${m[1]}€/j`,
+    },
+    // $200-300k · $200k
+    {
+      re: /\$\s*(\d+(?:[.,]\d+)?)\s*[–\-—]\s*(\d+(?:[.,]\d+)?)\s*k\b/i,
+      fmt: (m) => `$${m[1]}–${m[2]}k`,
+    },
+    {
+      re: /\$\s*(\d+(?:[.,]\d+)?)\s*k\b/i,
+      fmt: (m) => `$${m[1]}k`,
+    },
+    // 45–60 k€ / 45-60k€
+    {
+      re: /(\d+(?:[.,]\d+)?)\s*[–\-—]\s*(\d+(?:[.,]\d+)?)\s*k\s*€/i,
+      fmt: (m) => `${m[1]}–${m[2]} k€`,
+    },
+    // 50k€ · 140 K€ · 50 k€
+    {
+      re: /(\d+(?:[.,]\d+)?)\s*k\s*€/i,
+      fmt: (m) => `${m[1]} k€`,
+    },
+    // 50k (with salary/package/comp context nearby — already covered by package;
+    // bare "Nk" only if preceded by salaire/salary/rémunération)
+    {
+      re: /\b(?:salaire|salary|r[eé]mun[eé]ration)\b[^0-9$]{0,24}(\d+(?:[.,]\d+)?)\s*[–\-—]\s*(\d+(?:[.,]\d+)?)\s*k\b/i,
+      fmt: (m) => `${m[1]}–${m[2]} k€`,
+    },
+    {
+      re: /\b(?:salaire|salary|r[eé]mun[eé]ration)\b[^0-9$]{0,24}(\d+(?:[.,]\d+)?)\s*k\b/i,
+      fmt: (m) => `${m[1]} k€`,
+    },
+  ];
+
+  for (const { re, fmt } of pats) {
+    const m = text.match(re);
+    if (m) return fmt(m);
+  }
+  return "";
+}
+
 /** Light company extraction — only clear patterns; otherwise omit. */
 function deriveCompany(message: string): string {
   const text = stripUrls(message).replace(/\s+/g, " ").trim();
@@ -169,6 +242,7 @@ export function normalizeJob(raw: RawJob, index: number): Job {
     dateFull: raw.date_time_shown || "",
     excerpt: deriveExcerpt(raw.message_text),
     body: deriveBody(raw.message_text),
+    salary: deriveSalary(raw.message_text),
     filterTags,
     primaryUrl,
     permalink: raw.slack_permalink,
