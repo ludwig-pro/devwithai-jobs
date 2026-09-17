@@ -24,6 +24,6 @@ npm start
 
 ## V1 scope
 
-- Search + chips Remote / CDI / Freelance / IA
+- Search + chips Remote / CDI / Freelance
 - Listing dense, click → URL externe ou permalink Slack
 - Pas d’auth, pas de page détail, pas de formulaire de post

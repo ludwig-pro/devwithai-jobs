@@ -1,9 +1,10 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import type { FilterTag, Job } from "@/lib/types";
+import type { Job } from "@/lib/types";
 
-const CHIPS: FilterTag[] = ["Remote", "CDI", "Freelance", "IA"];
+const CHIPS = ["Remote", "CDI", "Freelance"] as const;
+type ChipFilter = (typeof CHIPS)[number];
 const SLACK_URL = "https://devw.ai/slack";
 
 type Props = {
@@ -12,7 +13,7 @@ type Props = {
 
 export default function JobsBoard({ jobs }: Props) {
   const [q, setQ] = useState("");
-  const [chips, setChips] = useState<Set<FilterTag>>(new Set());
+  const [chips, setChips] = useState<Set<ChipFilter>>(new Set());
 
   const filtered = useMemo(() => {
     const query = q.trim().toLowerCase();
@@ -41,7 +42,7 @@ export default function JobsBoard({ jobs }: Props) {
   const emptyFilter = !emptyData && filtered.length === 0 && hasFilters;
   const showList = !emptyData && !emptyFilter;
 
-  function toggleChip(c: FilterTag) {
+  function toggleChip(c: ChipFilter) {
     setChips((prev) => {
       const next = new Set(prev);
       if (next.has(c)) next.delete(c);
